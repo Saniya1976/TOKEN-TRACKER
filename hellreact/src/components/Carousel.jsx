@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@mui/styles';
 import axios from 'axios';
 import { TrendingCoins as getTrendingCoinsApi } from '../config/Api';
 import { cryptoState } from '../context/Tokencontext';
@@ -7,28 +6,10 @@ import AliceCarousel from 'react-alice-carousel';
 import { Link } from 'react-router-dom';
 import 'react-alice-carousel/lib/alice-carousel.css';
 
-const useStyles = makeStyles(() => ({
-  carousel: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50%',
-  },
-  carouselItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textDecoration: 'none',
-    color: 'white',
-    padding: '10px',
-    cursor: 'pointer',
-  },
-}));
-
 const Carousel = () => {
   const [trendingCoins, setTrendingCoins] = useState([]);
-  const classes = useStyles();
-  const { currency } = cryptoState();
+  const [loading, setLoading] = useState(true);
+  const { currency, symbol } = cryptoState();
 
   const fetchTrendingCoins = async () => {
     try {
@@ -36,6 +17,8 @@ const Carousel = () => {
       setTrendingCoins(data);
     } catch (error) {
       console.error('Error fetching trending coins:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,46 +26,83 @@ const Carousel = () => {
     fetchTrendingCoins();
   }, [currency]);
 
-  const formatPrice = (price) => {
-    if (currency === 'INR') {
-      return `₹${(price * 85).toLocaleString()}`; 
-    } else {
-      return `$${price.toLocaleString()}`;
-    }
-  };
-
-  const items = trendingCoins.map((coin) => (
-    <Link
-      key={coin.id}
-      className={classes.carouselItem}
-      to={`/coins/${coin.id}`}
-    >
-      <img
-        src={coin.image}
-        alt={coin.name}
-        style={{ marginBottom: 10, height: 70 }}
-      />
-      <span style={{ fontWeight: 'bold', color: 'goldenrod' }}>{coin.name}</span>
-      <span style={{ textTransform: 'uppercase', fontWeight: 600 }}>
-        {coin.symbol}
-      </span>
-      <span style={{ color: 'lightgray' }}>{formatPrice(coin.current_price)}</span>
-    </Link>
-  ));
+  const items = trendingCoins.map((coin) => {
+    const isUp = coin.price_change_percentage_24h >= 0;
+    return (
+      <Link
+        key={coin.id}
+        to={`/coins/${coin.id}`}
+        style={{ textDecoration: 'none' }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '8px 4px',
+            gap: 6,
+            cursor: 'pointer',
+            transition: 'transform 0.25s ease',
+          }}
+          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-5px)'}
+          onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+        >
+          {/* Circular coin image */}
+          <div style={{
+            width: 64, height: 64, borderRadius: '50%',
+            border: `2px solid ${isUp ? 'rgba(22,199,132,0.4)' : 'rgba(234,57,67,0.4)'}`,
+            boxShadow: `0 0 12px ${isUp ? 'rgba(22,199,132,0.15)' : 'rgba(234,57,67,0.15)'}`,
+            overflow: 'hidden',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(255,255,255,0.05)',
+          }}>
+            <img src={coin.image} alt={coin.name} style={{ width: 52, height: 52, borderRadius: '50%' }} />
+          </div>
+          {/* Symbol */}
+          <span style={{ color: '#e0e0e0', fontWeight: 700, fontSize: '0.78rem', letterSpacing: '0.04em' }}>
+            {coin.symbol.toUpperCase()}
+          </span>
+          {/* 24h change badge */}
+          <span style={{
+            fontSize: '0.72rem', fontWeight: 700,
+            color: isUp ? '#16c784' : '#ea3943',
+          }}>
+            {isUp ? '▲' : '▼'} {Math.abs(coin.price_change_percentage_24h).toFixed(1)}%
+          </span>
+        </div>
+      </Link>
+    );
+  });
 
   const responsive = {
     0: { items: 2 },
-    512: { items: 4 },
-    1024: { items: 6 },
+    480: { items: 3 },
+    768: { items: 5 },
+    1024: { items: 7 },
   };
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', padding: '12px 0' }}>
+        {[...Array(5)].map((_, i) => (
+          <div key={i} style={{
+            width: 90, height: 110, borderRadius: 14,
+            background: 'linear-gradient(90deg, #1a1c24 25%, #22242e 50%, #1a1c24 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s infinite',
+          }} />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className={classes.carousel}>
+    <div style={{ padding: '0 8px' }}>
       <AliceCarousel
         mouseTracking
         infinite
-        autoPlayInterval={900}
-        animationDuration={1500}
+        autoPlayInterval={2500}
+        animationDuration={800}
         disableDotsControls
         disableButtonsControls
         responsive={responsive}

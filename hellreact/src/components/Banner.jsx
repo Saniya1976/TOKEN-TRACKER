@@ -1,40 +1,83 @@
 import React from 'react';
-import { Container } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import Carousel from './Carousel';
-const useStyles = makeStyles(() => ({
-  banner: {
-    backgroundImage: 'url("https://t4.ftcdn.net/jpg/04/51/96/93/360_F_451969390_fwd7fUNbLuQ0125iqpsV98d1u6Jy7GTY.jpg")', // Replace with your high-res image path
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor: '#000000',
-    minHeight: '320px', // Ensure it has a minimum height for visual consistency
-    width: '100%',
-  },
-  bannerContent: {
-    height: '100%', // Ensure it takes up the full height of the banner
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingTop: 25,
-    textAlign: 'center',
-    color: 'white',
-  },
-}));
 
 const Banner = () => {
-  const classes = useStyles();
-
   return (
-    <div className={classes.banner}>
-      <Container className={classes.bannerContent}>
-        <h1 style={{ fontSize: '4rem', fontWeight: '900' }} className='text-white'>
-          Token Tracker X
-        </h1>
-        <div className='h-4'></div>
+    <div style={{
+      background: 'linear-gradient(180deg, #0d0f17 0%, #0a0b0f 100%)',
+      borderBottom: '1px solid rgba(240,185,11,0.1)',
+      padding: '48px 0 32px',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Background glow orbs */}
+      <div style={{
+        position: 'absolute', top: -80, left: '20%',
+        width: 400, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(240,185,11,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', top: -60, right: '15%',
+        width: 300, height: 300, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px' }}>
+        {/* Hero text */}
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{
+            display: 'inline-block',
+            background: 'rgba(240,185,11,0.1)',
+            border: '1px solid rgba(240,185,11,0.25)',
+            borderRadius: 40,
+            padding: '6px 18px',
+            fontSize: '0.78rem',
+            color: '#f0b90b',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            marginBottom: 20,
+          }}>
+            🔥 Live Crypto Data
+          </div>
+
+          <h1 style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
+            fontWeight: 800,
+            lineHeight: 1.15,
+            marginBottom: 16,
+          }}>
+            <span style={{
+              background: 'linear-gradient(135deg, #ffffff 30%, #aaa)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>Track the World's</span>
+            <br />
+            <span style={{
+              background: 'linear-gradient(135deg, #f0b90b, #ffd700, #f0b90b)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>Top Cryptocurrencies</span>
+          </h1>
+
+          <p style={{ color: '#888', fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
+            Real-time prices, market caps, and trends for 100+ coins — switch between INR and USD instantly.
+          </p>
+        </div>
+
+        {/* Trending label */}
+        <div style={{ textAlign: 'center', marginBottom: 12 }}>
+          <span style={{ color: '#555', fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            🚀 Trending Right Now
+          </span>
+        </div>
+
+        {/* Carousel */}
         <Carousel />
-      </Container>
+      </div>
     </div>
   );
 };
